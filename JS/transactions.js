@@ -218,3 +218,12 @@ if (mobileMenuBtn && sidebar) {
     }
   });
 }
+
+// ===== Update Profile Avatar Initial =====
+const savedName = localStorage.getItem('userName');
+if (savedName) {
+  const initial = savedName.charAt(0).toUpperCase();
+  document.querySelectorAll('.profile-avatar, .profile-avatar-big-small').forEach(el => {
+    el.textContent = initial;
+  });
+}
