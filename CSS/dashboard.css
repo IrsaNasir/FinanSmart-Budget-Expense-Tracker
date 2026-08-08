@@ -1,4 +1,4 @@
- /* ===== Reset & Base ===== */
+  /* ===== Reset & Base ===== */
 * {
   margin: 0;
   padding: 0;
@@ -268,12 +268,7 @@ body.dark-mode .sidebar-logo {
     padding: 0 20px 30px;
   }
 
-  .sidebar-logo::after {
-    content: "F";
-    font-size: 22px;
-    font-weight: 700;
-  }
-
+  
   .nav-item {
     font-size: 0;
     padding: 13px 20px;
