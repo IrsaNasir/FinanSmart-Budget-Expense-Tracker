@@ -156,6 +156,10 @@ if (localStorage.getItem('userEmail')) editEmail.value = localStorage.getItem('u
 document.getElementById('saveProfileBtn').addEventListener('click', () => {
   localStorage.setItem('userName', editName.value);
   localStorage.setItem('userEmail', editEmail.value);
+  const initial = editName.value.charAt(0).toUpperCase();
+  document.querySelectorAll('.profile-avatar, .profile-avatar-big-small').forEach(el => {
+    el.textContent = initial;
+  });
   alert('Profile updated!');
 });
 
@@ -173,5 +177,14 @@ if (mobileMenuBtn) {
         sidebar.classList.remove('mobile-open');
       }
     }
+  });
+}
+
+// ===== Update Profile Avatar Initial =====
+const savedName = localStorage.getItem('userName');
+if (savedName) {
+  const initial = savedName.charAt(0).toUpperCase();
+  document.querySelectorAll('.profile-avatar, .profile-avatar-big-small').forEach(el => {
+    el.textContent = initial;
   });
 }
