@@ -1,0 +1,277 @@
+ /* ===== Reset & Base ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #F9FAFB;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ===== Background Blobs ===== */
+.blob {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(0px);
+  opacity: 0.45;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.blob1 {
+  width: 250px;
+  height: 250px;
+  background: #10B981;
+  top: 5%;
+  left: -5%;
+  animation: float1 14s ease-in-out infinite;
+}
+
+.blob2 {
+  width: 220px;
+  height: 220px;
+  background: #6366F1;
+  bottom: 10%;
+  right: -5%;
+  animation: float2 16s ease-in-out infinite;
+}
+
+.blob3 {
+  width: 180px;
+  height: 180px;
+  background: #34D399;
+  top: 60%;
+  left: 10%;
+  animation: float3 13s ease-in-out infinite;
+}
+
+@keyframes float1 {
+  0% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(30vw, 12vh) scale(1.1); }
+  50% { transform: translate(20vw, 30vh) scale(0.95); }
+  75% { transform: translate(5vw, 15vh) scale(1.05); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes float2 {
+  0% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-25vw, -15vh) scale(1.08); }
+  50% { transform: translate(-35vw, 5vh) scale(0.92); }
+  75% { transform: translate(-15vw, -25vh) scale(1.05); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes float3 {
+  0% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-20vw, -20vh) scale(1.05); }
+  50% { transform: translate(15vw, -30vh) scale(0.95); }
+  75% { transform: translate(25vw, -10vh) scale(1.02); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* ===== Login Wrapper ===== */
+.login-wrapper {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ===== Login Card (Glassmorphism) ===== */
+.login-card {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  padding: 45px 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 0.8s ease;
+}
+
+.login-card .logo {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 20px;
+}
+
+.login-card .logo span {
+  color: #10B981;
+}
+
+.login-card h2 {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1E293B;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #64748B;
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+/* ===== Form ===== */
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 6px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #10B981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  font-size: 13px;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #64748B;
+  cursor: pointer;
+}
+
+.forgot {
+  color: #10B981;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.forgot:hover {
+  text-decoration: underline;
+}
+
+.btn-login {
+  width: 100%;
+  padding: 14px;
+  background: #10B981;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.35);
+}
+
+/* ===== Divider ===== */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 24px 0;
+  color: #94A3B8;
+  font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.divider span {
+  padding: 0 12px;
+}
+
+/* ===== Google Button ===== */
+.btn-google {
+  width: 100%;
+  padding: 13px;
+  background: #fff;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E293B;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.btn-google:hover {
+  background: #F9FAFB;
+  transform: translateY(-2px);
+}
+
+/* ===== Signup Text ===== */
+.signup-text {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 13px;
+  color: #64748B;
+}
+
+.signup-text a {
+  color: #10B981;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.signup-text a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Animation ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 35px 24px;
+  }
+}

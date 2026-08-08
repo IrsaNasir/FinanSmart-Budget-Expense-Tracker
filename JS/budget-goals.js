@@ -1,0 +1,243 @@
+ const bgTransactions = JSON.parse(localStorage.getItem('transactions')) || [];
+let goals = JSON.parse(localStorage.getItem('goals')) || [];
+
+// ===== Budget Bars =====
+const budgetCategories = [
+  { name: 'Food', icon: '🍔', limit: 10000, color: '#10B981' },
+  { name: 'Shopping', icon: '🛒', limit: 10000, color: '#6366F1' },
+  { name: 'Bills', icon: '💡', limit: 9000, color: '#EF4444' },
+  { name: 'Entertainment', icon: '🎬', limit: 10000, color: '#F59E0B' }
+];
+
+function renderBudgetGoals() {
+  const grid = document.getElementById('budgetGoalsGrid');
+  grid.innerHTML = '';
+
+  budgetCategories.forEach(cat => {
+    const spent = bgTransactions
+      .filter(t => t.type === 'expense' && t.category === cat.name)
+      .reduce((a, b) => a + b.amount, 0);
+
+    const percent = Math.min(Math.round((spent / cat.limit) * 100), 100);
+
+    grid.innerHTML += `
+      <div class="budget-item">
+        <div class="budget-top">
+          <div class="budget-icon-name">
+            <span class="budget-icon">${cat.icon}</span>
+            <div>
+              <p class="budget-name">${cat.name}</p>
+              <p class="budget-sub">Monthly limit</p>
+            </div>
+          </div>
+          <span class="budget-amount">${formatAmount(spent)}</span>
+        </div>
+        <div class="budget-track">
+          <div class="budget-fill" style="width: ${percent}%; background: ${cat.color};"></div>
+        </div>
+        <div class="budget-range">
+          <span>${formatAmount(0)}</span>
+          <span>${formatAmount(cat.limit)}</span>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ===== Savings Goals =====
+function renderGoals() {
+  const grid = document.getElementById('goalsGrid');
+  grid.innerHTML = '';
+
+  if (goals.length === 0) {
+    grid.innerHTML = '<p style="color:#94A3B8; font-size:13px;">No goals yet. Add one to start saving!</p>';
+    return;
+  }
+
+  goals.forEach(g => {
+    const percent = Math.min(Math.round((g.saved / g.target) * 100), 100);
+
+    grid.innerHTML += `
+      <div class="goal-item">
+        <div class="goal-top">
+          <span class="goal-name">🎯 ${g.name}</span>
+          <span class="goal-percent">${percent}%</span>
+        </div>
+        <div class="budget-track">
+          <div class="budget-fill" style="width: ${percent}%; background: #10B981;"></div>
+        </div>
+        <div class="goal-amounts">
+          <span>Saved: ${formatAmount(g.saved)}</span>
+          <span>Target: ${formatAmount(g.target)}</span>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// ===== Toggle Add Goal Form =====
+document.getElementById('openGoalForm').addEventListener('click', () => {
+  const form = document.getElementById('goalForm');
+  form.style.display = form.style.display === 'none' ? 'grid' : 'none';
+});
+
+// ===== Save New Goal =====
+document.getElementById('saveGoalBtn').addEventListener('click', () => {
+  const name = document.getElementById('goalName').value;
+  const target = parseFloat(document.getElementById('goalTarget').value);
+  const saved = parseFloat(document.getElementById('goalSaved').value) || 0;
+
+  if (!name || !target) {
+    alert('Please fill goal name and target amount.');
+    return;
+  }
+
+  goals.push({ id: Date.now(), name, target, saved });
+  localStorage.setItem('goals', JSON.stringify(goals));
+
+  document.getElementById('goalName').value = '';
+  document.getElementById('goalTarget').value = '';
+  document.getElementById('goalSaved').value = '';
+  document.getElementById('goalForm').style.display = 'none';
+
+  renderGoals();
+});
+
+// Dark mode
+const themeToggle = document.getElementById('themeToggle');
+const moonIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+const sunIcon = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+
+if (localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark-mode');
+  themeToggle.innerHTML = sunIcon;
+}
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark-mode');
+  localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+  themeToggle.innerHTML = document.body.classList.contains('dark-mode') ? sunIcon : moonIcon;
+});
+renderBudgetGoals();
+renderGoals();
+
+document.querySelector('.logout').addEventListener('click', function(e) {
+  e.preventDefault();
+  const confirmLogout = confirm('Are you sure you want to logout?');
+  if (confirmLogout) {
+    window.location.href = 'index.html';
+  }
+});
+
+// ===== Notifications =====
+function generateNotifications() {
+  const tx = JSON.parse(localStorage.getItem('transactions')) || [];
+  const notifs = [];
+
+  const limits = { Food: 10000, Shopping: 10000, Bills: 9000, Entertainment: 10000 };
+  const spending = {};
+
+  tx.forEach(t => {
+    if (t.type === 'expense') {
+      spending[t.category] = (spending[t.category] || 0) + t.amount;
+    }
+  });
+
+  Object.keys(limits).forEach(cat => {
+    if (spending[cat] && spending[cat] >= limits[cat]) {
+      notifs.push({ from: 'FinFlow Alerts', text: `⚠️ You exceeded your ${cat} budget!` });
+    } else if (spending[cat] && spending[cat] >= limits[cat] * 0.8) {
+      notifs.push({ from: 'FinFlow Alerts', text: `⚡ You're close to your ${cat} budget limit.` });
+    }
+  });
+
+  const lastIncome = [...tx].reverse().find(t => t.type === 'income');
+  if (lastIncome) {
+    notifs.push({ from: 'FinFlow', text: `💰 Rs ${lastIncome.amount.toLocaleString()} income received.` });
+  }
+
+  const income = tx.filter(t => t.type === 'income').reduce((a, b) => a + b.amount, 0);
+  const expense = tx.filter(t => t.type === 'expense').reduce((a, b) => a + b.amount, 0);
+  if (income > 0 && expense > 0 && expense < income * 0.8) {
+    notifs.push({ from: 'FinFlow', text: `🎉 Great job! You've saved over 20% this month.` });
+  }
+
+  return notifs;
+}
+
+function renderNotifications() {
+  const notifs = generateNotifications();
+  const badge = document.getElementById('notifBadge');
+  const list = document.getElementById('notifList');
+
+  if (notifs.length > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = notifs.length;
+  } else {
+    badge.style.display = 'none';
+  }
+
+  list.innerHTML = notifs.length
+    ? notifs.map(n => `<div class="notif-item"><div class="notif-from">${n.from}</div>${n.text}</div>`).join('')
+    : '<div class="notif-empty">No new notifications</div>';
+}
+
+const notifBell = document.getElementById('notifBell');
+const notifDropdown = document.getElementById('notifDropdown');
+
+notifBell.addEventListener('click', (e) => {
+  e.stopPropagation();
+  notifDropdown.style.display = notifDropdown.style.display === 'block' ? 'none' : 'block';
+});
+
+document.addEventListener('click', () => {
+  notifDropdown.style.display = 'none';
+});
+
+renderNotifications();
+
+// ===== Sidebar Toggle =====
+const sidebarToggle = document.getElementById('mobileMenuBtn');
+const sidebar = document.querySelector('.sidebar');
+const mainContent = document.querySelector('.main-content');
+
+if (localStorage.getItem('sidebarCollapsed') === 'true') {
+  sidebar.classList.add('collapsed');
+  mainContent.style.marginLeft = '70px';
+}
+
+sidebarToggle.addEventListener('click', () => {
+  sidebar.classList.toggle('collapsed');
+  const isCollapsed = sidebar.classList.contains('collapsed');
+  mainContent.style.marginLeft = isCollapsed ? '70px' : '220px';
+  localStorage.setItem('sidebarCollapsed', isCollapsed);
+});
+
+// ===== Profile Dropdown =====
+const profileTrigger = document.getElementById('profileTrigger');
+const profileDropdown = document.getElementById('profileDropdown');
+
+profileTrigger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  profileDropdown.style.display = profileDropdown.style.display === 'block' ? 'none' : 'block';
+});
+
+document.addEventListener('click', () => {
+  profileDropdown.style.display = 'none';
+});
+
+// ===== Mobile Menu Toggle =====
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+if (mobileMenuBtn) {
+  mobileMenuBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('mobile-open');
+  });
+
+  // Close sidebar when clicking outside on mobile
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-open')) {
+      if (!sidebar.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
+        sidebar.classList.remove('mobile-open');
+      }
+    }
+  });
+}
